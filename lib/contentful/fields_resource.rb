@@ -12,6 +12,9 @@ module Contentful
 
       @localized = localized
       @fields = hydrate_fields(includes, entries, errors)
+      @includes = includes
+      @entries = entries
+      @errors = errors
       define_fields_methods!
     end
 
@@ -48,7 +51,10 @@ module Contentful
       {
         configuration: @configuration,
         raw: raw_with_links,
-        localized: localized
+        localized: localized,
+        includes: @includes,
+        entries: @entries,
+        errors: @errors
       }
     end
 
@@ -56,7 +62,7 @@ module Contentful
     def marshal_load(raw_object)
       super(raw_object)
       @localized = raw_object[:localized]
-      @fields = hydrate_fields(raw_object[:configuration].fetch(:includes_for_single, []), {}, [])
+      @fields = hydrate_fields(raw_object[:includes], raw_object[:entries], raw_object[:errors])
       define_fields_methods!
     end
 
